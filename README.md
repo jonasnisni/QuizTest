@@ -11,3 +11,8 @@ Falta implementar:
 1. Contador de preguntas respondidas
 2. Ranking
 3. DOCKER 
+
+-------
+FALTA PARA QUE ANDE:
+
+Archivo .env --> Claves y datos sensibles 
