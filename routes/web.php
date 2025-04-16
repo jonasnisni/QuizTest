@@ -1,0 +1,130 @@
+<?php
+use App\Models\Question;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Models\User;
+use Illuminate\Support\Facades\Session;
+
+Route::get('/login', function () {
+    return view('login');
+});
+
+Route::post('/login', function (Request $request) {
+    $username = $request->input('username');
+    $password = $request->input('password');
+
+    Log::info("Intento de login - username: $username");
+
+    $user = DB::table('users')->where('username', $username)->first();
+
+    if ($user && Hash::check($password, $user->password)) {
+        Session::put('user_id', $user->id);
+        return redirect('/dashboard');
+    } else {
+        return "DATOS INCORRECTOS";
+    }
+})->name('login');
+
+
+Route::get('/dashboard', function () {
+    $userId = Session::get('user_id');
+
+    if (!$userId) {
+        return redirect('/login');
+    }
+
+    $user = User::find($userId);
+
+    $preguntasCreadas = $user->questions;
+    $preguntasDeOtros = Question::where('user_id', '!=', $userId)->get();
+
+    return view('dashboard', compact('user', 'preguntasCreadas', 'preguntasDeOtros'));
+});
+
+Route::post('/verificar', function (Request $request) {
+    $pregunta = Question::find($request->input('pregunta_id'));
+
+    if (!$pregunta) {
+        return back()->with('error', 'Pregunta no encontrada');
+    }
+
+    $respuestaCorrecta = strtolower(trim($pregunta->answer));
+    $respuestaUsuario = strtolower(trim($request->input('respuesta_usuario')));
+
+    if ($respuestaCorrecta === $respuestaUsuario) {
+        // Sumar puntos aca
+        return back()->with('success', 'CORRECTO');
+    } else {
+        return back()->with('error', 'INCORRECTO');
+    }
+})->name('verificar.respuesta');
+
+Route::post('/guardar-pregunta', function (Request $request) {
+    $userId = Session::get('user_id');
+
+    if (!$userId) {
+        return redirect('/login')->with('error', 'Debes iniciar sesión.');
+    }
+
+    Question::create([
+        'user_id' => $userId,
+        'question' => $request->input('question'),
+        'answer' => $request->input('answer'),
+    ]);
+
+    return redirect('/dashboard')->with('success', 'Pregunta creada con éxito.');
+})->name('guardar.pregunta');
+
+Route::get('/logout', function () {
+    Session::forget('user_id');
+
+    return redirect('/login')->with('success', 'Sesión cerrada correctamente.');
+})->name('logout');
+
+
+Route::get('/usuarios', function () {
+    $usuarios = User::all(); //Modificar aca
+    return view('usuarios', ['usuarios' => $usuarios]);
+});
+
+
+Route::get('/registrarse', function () {
+    return view('registrarse');
+})->name('registrarse.form');
+
+
+Route::post('/registrarse', function (Request $request) {
+    $username = $request->input('username');
+    $password = $request->input('password');
+
+    Log::info("Intento de registro - username: $username");
+
+    $existingUser = DB::table('users')->where('username', $username)->first();
+
+    if ($existingUser) {
+        return "USUARIO YA REGISTRADO";
+    }
+
+    $hashedPassword = Hash::make($password);
+
+    $userId = DB::table('users')->insertGetId([
+        'username' => $username,
+        'password' => $hashedPassword,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    Session::put('user_id', $userId);
+
+    Log::info("USUARIO REGISTRADO. ID : $userId");
+
+    return redirect('/dashboard');
+})->name('registrarse');
+
+
+
+
+
