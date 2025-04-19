@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\RespuestaController;
+
 
 Route::get('/login', function () {
     return view('login');
@@ -29,38 +31,12 @@ Route::post('/login', function (Request $request) {
 })->name('login');
 
 
-Route::get('/dashboard', function () {
-    $userId = Session::get('user_id');
 
-    if (!$userId) {
-        return redirect('/login');
-    }
 
-    $user = User::find($userId);
+Route::get('/dashboard',[DashboardController::class,'dashboard'])->name('dashboard');
 
-    $preguntasCreadas = $user->questions;
-    $preguntasDeOtros = Question::where('user_id', '!=', $userId)->get();
+Route::post('/verificar', [RespuestaController::class, 'verificar'])->name('verificar.respuesta');
 
-    return view('dashboard', compact('user', 'preguntasCreadas', 'preguntasDeOtros'));
-});
-
-Route::post('/verificar', function (Request $request) {
-    $pregunta = Question::find($request->input('pregunta_id'));
-
-    if (!$pregunta) {
-        return back()->with('error', 'Pregunta no encontrada');
-    }
-
-    $respuestaCorrecta = strtolower(trim($pregunta->answer));
-    $respuestaUsuario = strtolower(trim($request->input('respuesta_usuario')));
-
-    if ($respuestaCorrecta === $respuestaUsuario) {
-        // Sumar puntos aca
-        return back()->with('success', 'CORRECTO');
-    } else {
-        return back()->with('error', 'INCORRECTO');
-    }
-})->name('verificar.respuesta');
 
 Route::post('/guardar-pregunta', function (Request $request) {
     $userId = Session::get('user_id');
