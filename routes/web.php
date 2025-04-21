@@ -1,18 +1,12 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GuardarPreguntaController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\preguntasController;
 use App\Http\Controllers\RegistrarseController;
-use App\Models\Question;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use App\Models\User;
 use Illuminate\Support\Facades\Session;
-use App\Http\Controllers\RespuestaController;
+
 
 
 Route::get('/', function () {
@@ -27,11 +21,13 @@ Route::post('/login',LoginController::class)->name('login');
 
 Route::get('/dashboard',[DashboardController::class,'dashboard'])->name('dashboard');
 
-Route::post('/verificar', [RespuestaController::class, 'verificar'])->name('verificar.respuesta');
-
 Route::post('/registrarse',[RegistrarseController::class,'registrarse'])->name('registrarse');
 
-Route::post('/guardar-pregunta', GuardarPreguntaController::class)->name('guardar.pregunta');
+
+
+Route::post('/verificar-respuesta', [preguntasController::class,'verificarRespuesta'])->name('verificar.respuesta');
+Route::post('/guardar-pregunta',[preguntasController::class,'guardarPregunta'])->name('guardar.pregunta');
+//Route::post('/preguntas',[preguntaController::class,'sumarPuntos'])->name('sumarPuntos.pregunta');
 
 
 Route::get('/logout', function () {

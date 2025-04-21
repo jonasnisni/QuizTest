@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Model
+class User extends Authenticatable
 {
+    use HasFactory;
+
     protected $table = 'users';
 
     protected $fillable = [
@@ -13,7 +17,7 @@ class User extends Model
         'password',
     ];
 
-    public function questions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
     }
@@ -23,5 +27,6 @@ class User extends Model
         $this->attributes['password'] = bcrypt($value);
     }
 }
+
 
 

@@ -13,6 +13,11 @@
     <div style="color: red">{{ session('error') }}</div>
 @endif
 
+
+<h3>Tus puntos : {{$user->points}}</h3>
+
+
+
 <h3>Tus preguntas</h3>
 <ul>
     @foreach ($preguntasCreadas as $q)
