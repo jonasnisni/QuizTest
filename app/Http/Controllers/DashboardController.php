@@ -13,7 +13,6 @@ class DashboardController extends Controller
     public function dashboard(Request $request)
     {
         $userId = Session::get('user_id');
-
         if (!$userId) {
             return redirect('/login');
         }
