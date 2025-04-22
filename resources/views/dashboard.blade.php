@@ -2,7 +2,7 @@
 
 <head>
     <title>DASHBOARD</title>
-    @vite('resources/css/styles.css')
+    @vite('resources/css/stylesDashboard.css')
 </head>
 
 @if(session('success'))
@@ -14,13 +14,13 @@
 @endif
 
 
-<h3>Tus puntos : {{$user->points}}</h3>
+<h3>Tus puntos : {{$user->points}}</h3> <br>
 
 
 
 <h3>Tus preguntas</h3>
 <ul>
-    @foreach ($preguntasCreadas as $q)
+    @foreach ($preguntasCreadas as $q) <br>
         <li>{{ $q->question }} - Respuesta: {{ $q->answer ?? 'Sin responder' }}</li>
     @endforeach
 </ul>
@@ -29,31 +29,43 @@
 
 <form action="{{ route('guardar.pregunta') }}" method="POST">
     @csrf
-    <label for="question">Pregunta:</label><br>
+    <label for="question">Pregunta :</label><br>
     <input type="text" name="question" id="question" required><br><br>
 
-    <label for="answer">Respuesta (opcional):</label><br>
+    <label for="answer">Respuesta :</label><br>
     <input type="text" name="answer" id="answer"><br><br>
 
     <button type="submit">Guardar pregunta</button>
 </form>
 
+
+
+@php //Modificar esto en algun momento. Es horrible.
+    $usuarioActual = auth()->user();
+    $preguntasRespondidas = App\Models\AnsweredQuestion::where('user_id', $usuarioActual->id)
+                                                       ->pluck('question_id')
+                                                       ->toArray();
+@endphp
+
 <h3>Preguntas hechas por otros usuarios</h3>
 <ul>
     @foreach ($preguntasDeOtros as $q)
-        <li style="margin-bottom: 1.5rem;">
-            <p><strong>Pregunta:</strong> {{ $q->question }}</p>
-            <p><strong>Hecha por:</strong> {{ $q->user->username }}</p>
+        @if (!in_array($q->id, $preguntasRespondidas))
+            <li style="margin-bottom: 1.5rem;">
+                <p><strong>Pregunta:</strong> {{ $q->question }}</p>
+                <p><strong>Hecha por:</strong> {{ $q->user->username }}</p>
 
-            <form action="{{ route('verificar.respuesta') }}" method="POST">
-                @csrf
-                <input type="hidden" name="pregunta_id" value="{{ $q->id }}">
-                <label>Tu respuesta:</label><br>
-                <input type="text" name="respuesta_usuario" required>
-                <button type="submit">Responder</button>
-            </form>
-        </li>
+                <form action="{{ route('verificar.respuesta') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="pregunta_id" value="{{ $q->id }}">
+                    <label>Tu respuesta:</label><br>
+                    <input type="text" name="respuesta_usuario" required>
+                    <button type="submit">Responder</button>
+                </form>
+            </li>
+        @endif
     @endforeach
+</ul>
 
 
 
@@ -61,5 +73,5 @@
 </ul>
 
 <form action="{{ route('logout') }}" method="GET" style="display:inline;">
-    <button type="submit">Cerrar sesión</button>
+    <button type="submit" id="logout">Cerrar sesión</button>
 </form>

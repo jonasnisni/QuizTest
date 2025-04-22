@@ -26,7 +26,9 @@ Route::post('/registrarse',[RegistrarseController::class,'registrarse'])->name('
 
 
 Route::post('/verificar-respuesta', [preguntasController::class,'verificarRespuesta'])->name('verificar.respuesta');
-Route::post('/guardar-pregunta',[preguntasController::class,'guardarPregunta'])->name('guardar.pregunta');
+Route::post('/guardar-pregunta', [PreguntasController::class, 'guardarPregunta'])
+    ->middleware('auth')
+    ->name('guardar.pregunta');
 //Route::post('/preguntas',[preguntaController::class,'sumarPuntos'])->name('sumarPuntos.pregunta');
 
 

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Question extends Model
 {
@@ -14,8 +16,22 @@ class Question extends Model
         'answer',
     ];
 
-    public function user()
+    /**
+     * Relación inversa uno a muchos: pregunta pertenece a un usuario
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relación muchos a muchos: usuarios que respondieron esta pregunta
+     * Campos extra: is_correct, answered_at
+     */
+    public function respondents(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'answered_questions')
+            ->withPivot(['is_correct', 'answered_at'])
+            ->withTimestamps();
     }
 }

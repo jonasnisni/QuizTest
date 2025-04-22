@@ -4,18 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <title>REGISTRO</title>
-    @vite('resources/css/styles.css')
+    @vite('resources/css/register.css')
 </head>
 
 <body>
 <div id="registro">
+
     <form method="POST" id="formRegister" action="{{ route('registrarse') }}">
         @csrf
-        <label for="username">Nombre de usuario</label>
-        <input type="text" id="username" name="username" required> <br>
+        <h3>REGISTRO DE USUARIOS</h3> <br>
+        <label for="username"></label>
+        <input type="text" id="username" name="username" required placeholder="USUARIO"> <br>
 
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password" required> <br>
+        <label for="password"></label>
+        <input type="password" id="password" name="password" required placeholder="CONTRASEÑA"> <br>
 
         <input type="submit" value="Registrarme">
     </form>
