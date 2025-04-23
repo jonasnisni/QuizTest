@@ -16,12 +16,25 @@
 
 <h3>Tus puntos : {{$user->points}}</h3> <br>
 
+<div id="ranking">
+    <h3>Top 5 mejores usuarios</h3>
 
+    <ul class="list-group">
+        @forelse($top5 as $user)
+            <li class="list-group-item d-flex justify-content-between">
+                <strong>{{ $user->username }}</strong>
+                <span>{{ $user->points }} puntos</span>
+            </li>
+        @empty
+            <li class="list-group-item">No hay usuarios para mostrar.</li>
+        @endforelse
+    </ul>
+</div>
 
 <h3>Tus preguntas</h3>
 <ul>
     @foreach ($preguntasCreadas as $q) <br>
-        <li>{{ $q->question }} - Respuesta: {{ $q->answer ?? 'Sin responder' }}</li>
+        <li>{{ $q->question }} {{$q->id}} - Respuesta: {{ $q->answer ?? 'Sin responder' }}</li>
     @endforeach
 </ul>
 

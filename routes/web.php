@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\preguntasController;
+use App\Http\Controllers\pruebaController;
 use App\Http\Controllers\RegistrarseController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -24,12 +25,11 @@ Route::get('/dashboard',[DashboardController::class,'dashboard'])->name('dashboa
 Route::post('/registrarse',[RegistrarseController::class,'registrarse'])->name('registrarse');
 
 
-
 Route::post('/verificar-respuesta', [preguntasController::class,'verificarRespuesta'])->name('verificar.respuesta');
 Route::post('/guardar-pregunta', [PreguntasController::class, 'guardarPregunta'])
     ->middleware('auth')
     ->name('guardar.pregunta');
-//Route::post('/preguntas',[preguntaController::class,'sumarPuntos'])->name('sumarPuntos.pregunta');
+
 
 
 Route::get('/logout', function () {
@@ -43,7 +43,7 @@ Route::get('/registrarse', function () {
 
 
 
-
+Route::get('/prueba', PruebaController::class) ->name('prueba');
 
 
 

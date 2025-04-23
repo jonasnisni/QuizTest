@@ -16,18 +16,11 @@ class Question extends Model
         'answer',
     ];
 
-    /**
-     * Relación inversa uno a muchos: pregunta pertenece a un usuario
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Relación muchos a muchos: usuarios que respondieron esta pregunta
-     * Campos extra: is_correct, answered_at
-     */
     public function respondents(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'answered_questions')

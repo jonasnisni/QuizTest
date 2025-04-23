@@ -19,13 +19,11 @@ class AnsweredQuestion extends Model
         'answered_at' => 'datetime',
     ];
 
-    // Relación con el usuario
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relación con la pregunta
     public function question()
     {
         return $this->belongsTo(Question::class);
