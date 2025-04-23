@@ -8,9 +8,9 @@ Entrar a /login
 
 ------
 Falta implementar:
-1. Contador de preguntas respondidas
-2. Ranking
-3. DOCKER 
+1. Borrar preguntas
+2. Mejorar CSS
+3. Docker
 
 -------
 FALTA PARA QUE ANDE:
