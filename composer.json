@@ -13,6 +13,7 @@
         "ext-mongodb": "*",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "livewire/livewire": "^3.6",
         "soyuka/stubs-mongodb": "^1.0"
     },
     "require-dev": {
