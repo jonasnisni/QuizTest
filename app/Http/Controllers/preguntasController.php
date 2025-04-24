@@ -27,12 +27,10 @@ class preguntasController extends Controller
         if ($respuestaCorrecta === $respuestaUsuario) {
             $user = auth()->user();
 
-            // Verificar si el usuario ya respondió esta pregunta
             $yaRespondida = AnsweredQuestion::where('user_id', $user->id)
                 ->where('question_id', $pregunta->id)
                 ->exists();
 
-            // Solo sumar puntos y registrar respuesta si no la había respondido antes
             if (!$yaRespondida) {
                 $user->points += 1;
                 $user->save();
@@ -68,6 +66,39 @@ public function guardarPregunta(Request $request)
 
     return redirect('/dashboard')->with('success', 'Pregunta creada con éxito.');
 }
+
+public function modificarPregunta(Request $request,$id)
+{
+    {
+        $data = $request->validate([
+            'question' => 'required|string|max:255',
+            'answer'   => 'nullable|string|max:255',
+        ]);
+
+        $pregunta = Question::findOrFail($id);
+        $pregunta->question = $data['question'];
+        $pregunta->answer   = $data['answer'];
+        $pregunta->save();
+
+        return redirect()->back()
+            ->with('success', 'Pregunta y respuesta actualizadas.');
+    }
+}
+
+
+
+public function borrarPregunta(Request $request)
+        {
+            $request->validate([
+                'id' => 'required|integer|exists:questions,id'
+            ]);
+
+            Question::destroy($request->id);
+
+            return redirect()->back()
+                ->with('success', 'Pregunta eliminada correctamente.');
+        }
+
 
 }
 

@@ -43,7 +43,14 @@ Route::get('/registrarse', function () {
 
 
 
-Route::get('/prueba', PruebaController::class) ->name('prueba');
+Route::put(
+    '/preguntas/{id}/modificar',
+    [PreguntasController::class, 'modificarPregunta']
+)->name('preguntas.modificar');
+
+Route::post('preguntas.borrar',[preguntasController::class,'borrarPregunta'])->name('preguntas.borrar');
+
+
 
 
 

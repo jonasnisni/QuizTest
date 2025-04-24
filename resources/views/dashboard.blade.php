@@ -1,6 +1,7 @@
 <h2>Bienvenido, {{ $user->username }}</h2>
 
 <head>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <title>DASHBOARD</title>
     @vite('resources/css/stylesDashboard.css')
 </head>
@@ -30,13 +31,85 @@
         @endforelse
     </ul>
 </div>
-
 <h3>Tus preguntas</h3>
 <ul>
-    @foreach ($preguntasCreadas as $q) <br>
-        <li>{{ $q->question }} {{$q->id}} - Respuesta: {{ $q->answer ?? 'Sin responder' }}</li>
+    @foreach ($preguntasCreadas as $q)
+        <li
+            x-data="{
+        edit: false,
+        question: '{{ addslashes($q->question) }}',
+        answer:   '{{ addslashes($q->answer ?? '') }}'
+      }"
+            class="mb-2"
+        >
+            {{-- Vista lectura --}}
+            <div x-show="!edit">
+                <strong x-text="question"></strong> —
+                <em x-text="answer || 'Sin responder'"></em>
+
+                <button
+                    @click.prevent="edit = true"
+                    class="ml-2 px-2 py-1 bg-blue-500 text-white rounded"
+                >Modificar</button>
+
+                {{-- Botón Borrar --}}
+                <form
+                    action="{{ route('preguntas.borrar') }}"
+                    method="POST"
+                    style="display:inline"
+                >
+                    @csrf
+                    <input type="hidden" name="id" value="{{ $q->id }}">
+                    <button
+                        type="submit"
+                        onclick="return confirm('¿Seguro que quieres borrar esta pregunta?')"
+                        class="ml-1 px-2 py-1 bg-red-500 text-white rounded"
+                    >Borrar</button>
+                </form>
+            </div>
+
+            {{-- Formulario edición --}}
+            <div x-show="edit">
+                <form
+                    action="{{ route('preguntas.modificar', $q->id) }}"
+                    method="POST"
+                    style="display:inline"
+                >
+                    @csrf
+                    @method('PUT')
+
+                    <input
+                        x-model="question"
+                        type="text"
+                        name="question"
+                        placeholder="Nueva pregunta"
+                        class="border px-1 py-1 rounded"
+                        required
+                    >
+                    <input
+                        x-model="answer"
+                        type="text"
+                        name="answer"
+                        placeholder="Nueva respuesta"
+                        class="border px-1 py-1 rounded ml-1"
+                    >
+
+                    <button
+                        type="submit"
+                        class="ml-1 px-2 py-1 bg-green-500 text-white rounded"
+                    >Guardar</button>
+                    <button
+                        type="button"
+                        @click.prevent="edit = false"
+                        class="ml-1 px-2 py-1 bg-gray-400 text-white rounded"
+                    >Cancelar</button>
+                </form>
+            </div>
+        </li>
     @endforeach
 </ul>
+
+
 
 <h3>Agregar una nueva pregunta</h3>
 
@@ -49,16 +122,14 @@
     <input type="text" name="answer" id="answer"><br><br>
 
     <button type="submit">Guardar pregunta</button>
+
+
+
 </form>
 
 
 
-@php //Modificar esto en algun momento. Es horrible.
-    $usuarioActual = auth()->user();
-    $preguntasRespondidas = App\Models\AnsweredQuestion::where('user_id', $usuarioActual->id)
-                                                       ->pluck('question_id')
-                                                       ->toArray();
-@endphp
+
 
 <h3>Preguntas hechas por otros usuarios</h3>
 <ul>
